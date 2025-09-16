@@ -1,0 +1,68 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: berlin_transport
+      POSTGRES_USER: transport_user
+      POSTGRES_PASSWORD: transport_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U transport_user -d berlin_transport"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  data-collector:
+    build: 
+      context: ./data-collection
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://transport_user:transport_pass@postgres:5432/berlin_transport
+      API_BASE_URL: https://v6.bvg.transport.rest
+      COLLECTION_INTERVAL: 30
+      LOG_LEVEL: INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./data-collection:/app
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass ${REDIS_PASSWORD:-redis_default_pass} --bind 0.0.0.0 --protected-mode yes
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - internal
+
+  monitoring:
+    build:
+      context: ./monitoring
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgresql://transport_user:transport_pass@postgres:5432/berlin_transport
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  internal:
+    driver: bridge
