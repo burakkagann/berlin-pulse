@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berlin Transport Time Machine</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+    
+    <!-- Application CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/map.css">
+    <link rel="stylesheet" href="css/controls.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Berlin Transport Time Machine</h1>
+            <div class="header-info">
+                <div class="current-time-display">
+                    <span id="current-time">--:--:--</span>
+                    <span id="current-date">----/--/--</span>
+                </div>
+                <div class="connection-status">
+                    <span id="api-status" class="status-indicator">⚫</span>
+                    <span>API</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Control Panel -->
+            <aside class="control-panel">
+                <!-- Playback Controls -->
+                <section class="playback-section">
+                    <h3>Playback Controls</h3>
+                    <div class="control-group">
+                        <button id="play-button" class="btn-primary" title="Play/Pause">
+                            <span class="icon">▶️</span>
+                        </button>
+                        <button id="reset-button" class="btn-secondary" title="Reset to beginning">
+                            <span class="icon">⏮️</span>
+                        </button>
+                        <button id="step-button" class="btn-secondary" title="Step forward">
+                            <span class="icon">⏭️</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Speed Controls -->
+                    <div class="speed-controls">
+                        <label>Speed:</label>
+                        <div class="speed-buttons">
+                            <button class="speed-control btn-speed" data-speed="0.5">0.5x</button>
+                            <button class="speed-control btn-speed active" data-speed="1">1x</button>
+                            <button class="speed-control btn-speed" data-speed="2">2x</button>
+                            <button class="speed-control btn-speed" data-speed="5">5x</button>
+                            <button class="speed-control btn-speed" data-speed="10">10x</button>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Timeline Controls -->
+                <section class="timeline-section">
+                    <h3>Timeline</h3>
+                    <div class="timeline-container">
+                        <input type="range" id="timeline-scrubber" min="0" max="100" value="0" step="0.1">
+                        <div class="timeline-labels">
+                            <span id="start-time">--:--</span>
+                            <span id="current-progress">0%</span>
+                            <span id="end-time">--:--</span>
+                        </div>
+                    </div>
+                    <div class="time-input-controls">
+                        <label for="jump-to-time">Jump to time:</label>
+                        <input type="datetime-local" id="jump-to-time" class="time-input">
+                        <button id="jump-button" class="btn-secondary">Go</button>
+                    </div>
+                </section>
+                
+                <!-- Transport Type Filters -->
+                <section class="filters-section">
+                    <h3>Transport Types</h3>
+                    <div class="transport-filters">
+                        <label class="filter-checkbox">
+                            <input type="checkbox" data-type="suburban" checked>
+                            <span class="checkmark" style="background-color: #0066cc;"></span>
+                            S-Bahn
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" data-type="subway" checked>
+                            <span class="checkmark" style="background-color: #003d82;"></span>
+                            U-Bahn
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" data-type="ring" checked>
+                            <span class="checkmark" style="background-color: #ff6b35;"></span>
+                            Ring
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" data-type="tram" checked>
+                            <span class="checkmark" style="background-color: #00a86b;"></span>
+                            Tram
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" data-type="bus" checked>
+                            <span class="checkmark" style="background-color: #dc2626;"></span>
+                            Bus
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" data-type="ferry">
+                            <span class="checkmark" style="background-color: #8b5cf6;"></span>
+                            Ferry
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" data-type="regional">
+                            <span class="checkmark" style="background-color: #ff8c00;"></span>
+                            Regional
+                        </label>
+                    </div>
+                </section>
+                
+                <!-- Live Statistics -->
+                <section class="stats-section">
+                    <h3>Live Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <label>Active Vehicles:</label>
+                            <span id="active-vehicles" class="stat-value">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <label>Average Delay:</label>
+                            <span id="average-delay" class="stat-value">-- min</span>
+                        </div>
+                        <div class="stat-item">
+                            <label>Frame Rate:</label>
+                            <span id="frame-rate" class="stat-value">-- fps</span>
+                        </div>
+                        <div class="stat-item">
+                            <label>Data Points:</label>
+                            <span id="data-points" class="stat-value">--</span>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+            
+            <!-- Map Container -->
+            <section class="map-container">
+                <div id="map" class="leaflet-map"></div>
+                
+                <!-- Map Overlay Controls -->
+                <div class="map-overlay-controls">
+                    <div class="map-control-group">
+                        <button id="toggle-routes" class="map-control-btn active" title="Toggle route lines">
+                            🛤️ Routes
+                        </button>
+                        <button id="toggle-stops" class="map-control-btn active" title="Toggle stop markers">
+                            📍 Stops
+                        </button>
+                        <button id="follow-vehicle" class="map-control-btn" title="Follow a vehicle">
+                            🎯 Follow
+                        </button>
+                    </div>
+                    
+                    <div class="map-info">
+                        <div id="hover-info" class="info-panel hidden">
+                            <div class="info-title">Vehicle Info</div>
+                            <div id="vehicle-details"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loading-message">Loading simulation data...</p>
+            <div class="loading-progress">
+                <div id="loading-bar" class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error Modal -->
+    <div id="error-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Error</h3>
+                <button id="error-close" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="error-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="error-retry" class="btn-primary">Retry</button>
+                <button id="error-dismiss" class="btn-secondary">Dismiss</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <!-- Leaflet.js -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <!-- Moment.js for time handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    
+    <!-- Application scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils/time-utils.js"></script>
+    <script src="js/utils/geo-utils.js"></script>
+    <script src="js/services/api-service.js"></script>
+    <script src="js/services/data-service.js"></script>
+    <script src="js/components/map-renderer.js"></script>
+    <script src="js/components/vehicle-animator.js"></script>
+    <script src="js/components/playback-controls.js"></script>
+    <script src="js/components/timeline-scrubber.js"></script>
+    <script src="js/controllers/simulation-controller.js"></script>
+    <script src="js/controllers/time-controller.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

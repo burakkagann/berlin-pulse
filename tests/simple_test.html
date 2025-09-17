@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berlin Transport API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .pass { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .fail { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .loading { background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Berlin Transport API Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        const API_BASE = 'http://localhost:8081/api/v1';
+        const resultsDiv = document.getElementById('results');
+        
+        function addResult(testName, status, message, data = null) {
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            div.innerHTML = `
+                <h3>${testName}</h3>
+                <p>${message}</p>
+                ${data ? `<pre>${JSON.stringify(data, null, 2)}</pre>` : ''}
+            `;
+            resultsDiv.appendChild(div);
+        }
+        
+        async function testAPI() {
+            addResult('Starting Tests', 'loading', 'Testing Berlin Transport API endpoints...');
+            
+            try {
+                // Test 1: Health check
+                addResult('Health Check', 'loading', 'Testing API health...');
+                const healthResponse = await fetch(`${API_BASE}/health`);
+                const healthData = await healthResponse.json();
+                
+                if (healthResponse.ok && healthData.status === 'healthy') {
+                    addResult('Health Check', 'pass', 'API is healthy and responding', healthData);
+                } else {
+                    addResult('Health Check', 'fail', 'API health check failed', healthData);
+                }
+                
+                // Test 2: Time range
+                addResult('Time Range', 'loading', 'Getting available time range...');
+                const timeRangeResponse = await fetch(`${API_BASE}/simulation/time-range`);
+                const timeRangeData = await timeRangeResponse.json();
+                
+                if (timeRangeResponse.ok && timeRangeData.total_records > 0) {
+                    addResult('Time Range', 'pass', 
+                        `Found ${timeRangeData.total_records.toLocaleString()} records over ${timeRangeData.total_duration_hours.toFixed(1)} hours`,
+                        {
+                            start_time: timeRangeData.start_time,
+                            end_time: timeRangeData.end_time,
+                            transport_types: timeRangeData.transport_types_available
+                        }
+                    );
+                    
+                    // Test 3: Vehicle positions
+                    addResult('Vehicle Positions', 'loading', 'Getting vehicle positions...');
+                    const testTime = new Date(timeRangeData.start_time);
+                    testTime.setHours(testTime.getHours() + 2); // 2 hours into data
+                    
+                    const vehiclesResponse = await fetch(
+                        `${API_BASE}/simulation/vehicles?timestamp=${testTime.toISOString()}&time_window_seconds=60`
+                    );
+                    const vehiclesData = await vehiclesResponse.json();
+                    
+                    if (vehiclesResponse.ok) {
+                        addResult('Vehicle Positions', 'pass', 
+                            `Found ${vehiclesData.total_vehicles} vehicles at ${testTime.toLocaleString()}`,
+                            {
+                                total_vehicles: vehiclesData.total_vehicles,
+                                transport_type_counts: vehiclesData.transport_type_counts,
+                                sample_vehicle: vehiclesData.vehicles[0] || null
+                            }
+                        );
+                    } else {
+                        addResult('Vehicle Positions', 'fail', 'Failed to get vehicle positions', vehiclesData);
+                    }
+                    
+                    // Test 4: Routes
+                    addResult('Routes', 'loading', 'Getting route information...');
+                    const routesResponse = await fetch(`${API_BASE}/routes`);
+                    const routesData = await routesResponse.json();
+                    
+                    if (routesResponse.ok && Array.isArray(routesData)) {
+                        addResult('Routes', 'pass', 
+                            `Found ${routesData.length} routes`,
+                            {
+                                total_routes: routesData.length,
+                                sample_routes: routesData.slice(0, 3)
+                            }
+                        );
+                    } else {
+                        addResult('Routes', 'fail', 'Failed to get routes', routesData);
+                    }
+                    
+                } else {
+                    addResult('Time Range', 'fail', 'Failed to get time range', timeRangeData);
+                }
+                
+                addResult('Complete', 'pass', 'API testing complete! ✅');
+                
+            } catch (error) {
+                addResult('Error', 'fail', `Test failed: ${error.message}`);
+            }
+        }
+        
+        // Run tests when page loads
+        testAPI();
+    </script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+/* Berlin Transport Time Machine - Map Styles */
+
+.map-container {
+    flex: 1;
+    position: relative;
+    background-color: var(--bg-primary);
+}
+
+.leaflet-map {
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+}
+
+/* Map Overlay Controls */
+.map-overlay-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.map-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: rgba(45, 45, 45, 0.95);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+}
+
+.map-control-btn {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+.map-control-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.map-control-btn:hover {
+    background-color: var(--border-color);
+}
+
+.map-control-btn.active:hover {
+    background-color: #0052a3;
+}
+
+/* Info Panel */
+.map-info {
+    max-width: 300px;
+}
+
+.info-panel {
+    background-color: rgba(45, 45, 45, 0.95);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.info-panel.hidden {
+    display: none;
+}
+
+.info-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+#vehicle-details {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+#vehicle-details .detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    color: var(--text-secondary);
+}
+
+#vehicle-details .detail-label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Custom Leaflet Styles */
+.leaflet-container {
+    background-color: #1a1a1a !important;
+}
+
+.leaflet-control-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Custom Zoom Controls */
+.leaflet-control-zoom {
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius) !important;
+    overflow: hidden;
+}
+
+.leaflet-control-zoom a {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background-color: var(--primary-color) !important;
+}
+
+/* Attribution Control */
+.leaflet-control-attribution {
+    background-color: rgba(45, 45, 45, 0.8) !important;
+    color: var(--text-muted) !important;
+    border-radius: var(--border-radius) !important;
+    border: 1px solid var(--border-color) !important;
+    font-size: 10px !important;
+}
+
+.leaflet-control-attribution a {
+    color: var(--primary-color) !important;
+}
+
+/* Vehicle Markers */
+.vehicle-marker {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50% !important;
+    border: 2px solid white !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.vehicle-marker:hover {
+    transform: scale(1.3) !important;
+    z-index: 1000 !important;
+}
+
+.vehicle-marker.delayed {
+    border-color: var(--warning-color) !important;
+    animation: pulse 2s infinite !important;
+}
+
+.vehicle-marker.cancelled {
+    border-color: var(--error-color) !important;
+    opacity: 0.6 !important;
+}
+
+/* Transport Type Colors */
+.vehicle-marker.suburban {
+    background-color: #0066cc !important;
+}
+
+.vehicle-marker.subway {
+    background-color: #003d82 !important;
+}
+
+.vehicle-marker.ring {
+    background-color: #ff6b35 !important;
+}
+
+.vehicle-marker.tram {
+    background-color: #00a86b !important;
+}
+
+.vehicle-marker.bus {
+    background-color: #dc2626 !important;
+}
+
+.vehicle-marker.ferry {
+    background-color: #8b5cf6 !important;
+}
+
+.vehicle-marker.regional {
+    background-color: #ff8c00 !important;
+}
+
+/* Route Lines */
+.route-line {
+    stroke-width: 3 !important;
+    stroke-opacity: 0.7 !important;
+    fill: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.route-line:hover {
+    stroke-width: 5 !important;
+    stroke-opacity: 1 !important;
+    z-index: 1000 !important;
+}
+
+.route-line.suburban {
+    stroke: #0066cc !important;
+}
+
+.route-line.subway {
+    stroke: #003d82 !important;
+}
+
+.route-line.ring {
+    stroke: #ff6b35 !important;
+}
+
+.route-line.tram {
+    stroke: #00a86b !important;
+}
+
+.route-line.bus {
+    stroke: #dc2626 !important;
+}
+
+.route-line.ferry {
+    stroke: #8b5cf6 !important;
+}
+
+.route-line.regional {
+    stroke: #ff8c00 !important;
+}
+
+/* Stop Markers */
+.stop-marker {
+    width: 12px !important;
+    height: 12px !important;
+    border-radius: 50% !important;
+    background-color: white !important;
+    border: 2px solid #333 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.stop-marker:hover {
+    transform: scale(1.5) !important;
+    z-index: 999 !important;
+}
+
+.stop-marker.major {
+    width: 16px !important;
+    height: 16px !important;
+    background-color: var(--primary-color) !important;
+    border-color: white !important;
+}
+
+/* Custom Popup Styles */
+.leaflet-popup-content-wrapper {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-radius: var(--border-radius) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.leaflet-popup-content {
+    margin: 15px !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.leaflet-popup-close-button {
+    color: var(--text-muted) !important;
+    font-size: 16px !important;
+    padding: 8px !important;
+}
+
+.leaflet-popup-close-button:hover {
+    color: var(--text-primary) !important;
+}
+
+/* Popup Content Styles */
+.popup-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.popup-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.popup-detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.popup-detail-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.popup-detail-value {
+    color: var(--text-primary);
+}
+
+.popup-delay {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+.popup-on-time {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+/* Animation Effects */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 140, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 140, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 140, 0, 0);
+    }
+}
+
+.vehicle-marker.animate-move {
+    transition: all 1s ease-in-out !important;
+}
+
+/* Loading States */
+.map-loading {
+    position: relative;
+}
+
+.map-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 2000;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .map-overlay-controls {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    .map-control-group {
+        flex-direction: row;
+        padding: 10px;
+    }
+    
+    .map-control-btn {
+        min-width: auto;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .info-panel {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        max-width: none;
+    }
+    
+    .vehicle-marker {
+        width: 20px !important;
+        height: 20px !important;
+    }
+}

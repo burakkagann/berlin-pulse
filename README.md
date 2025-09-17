@@ -125,22 +125,6 @@ Key environment variables in `.env`:
 - Stop coordinates and sequencing
 - Direction-specific route paths
 
-### Target Routes (Expanded)
-
-The system now tracks **12 target routes** across all transport types:
-- **S-Bahn:** S1, S3, S5, S7
-- **Ring Lines:** S41 (clockwise), S42 (counter-clockwise)  
-- **U-Bahn:** U2, U6
-- **Tram:** M1 MetroTram, Line 12
-- **Bus:** 100 (tourist route), 200
-
-### 📍 Tracked Stops
-
-10 major transportation hubs:
-- Berlin Hauptbahnhof, Alexanderplatz, Zoologischer Garten
-- Friedrichstraße, Ostbahnhof, Potsdamer Platz
-- Gesundbrunnen, Südkreuz, Tempelhof, Warschauer Straße
-
 ### 🔍 API Information
 
 Uses BVG transport.rest API:

@@ -1,0 +1,451 @@
+/* Berlin Transport Time Machine - Controls Styles */
+
+/* Enhanced Button States */
+.btn-primary:active,
+.btn-secondary:active,
+.btn-speed:active,
+.map-control-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary:disabled:hover,
+.btn-secondary:disabled:hover {
+    background-color: var(--primary-color);
+    box-shadow: none;
+    transform: none;
+}
+
+/* Playback Control Enhancements */
+.control-group .btn-primary,
+.control-group .btn-secondary {
+    min-width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.control-group .btn-primary .icon,
+.control-group .btn-secondary .icon {
+    font-size: 1.2rem;
+}
+
+.control-group .btn-primary[data-state="playing"] .icon {
+    animation: pulse-play 2s infinite;
+}
+
+@keyframes pulse-play {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Speed Control Enhancements */
+.speed-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.speed-control {
+    position: relative;
+    overflow: hidden;
+}
+
+.speed-control::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.speed-control:hover::before {
+    left: 100%;
+}
+
+.speed-control.active {
+    box-shadow: 0 0 10px rgba(0, 102, 204, 0.5);
+}
+
+/* Timeline Enhancements */
+.timeline-container {
+    position: relative;
+    padding: 15px 0;
+}
+
+#timeline-scrubber {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+#timeline-scrubber::-webkit-slider-track {
+    height: 8px;
+    background: linear-gradient(to right, var(--bg-secondary) 0%, var(--primary-color) var(--progress, 0%), var(--bg-secondary) var(--progress, 0%));
+    border-radius: 4px;
+}
+
+#timeline-scrubber::-moz-range-track {
+    height: 8px;
+    background: linear-gradient(to right, var(--bg-secondary) 0%, var(--primary-color) var(--progress, 0%), var(--bg-secondary) var(--progress, 0%));
+    border-radius: 4px;
+    border: none;
+}
+
+.timeline-labels {
+    margin-top: 8px;
+}
+
+.timeline-labels #current-progress {
+    color: var(--primary-color);
+    font-weight: 600;
+    background: rgba(0, 102, 204, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+}
+
+/* Time Input Enhancements */
+.time-input-controls {
+    background: var(--bg-secondary);
+    padding: 12px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.time-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+#jump-button {
+    background: linear-gradient(135deg, var(--primary-color), #0052a3);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+}
+
+#jump-button:hover {
+    background: linear-gradient(135deg, #0052a3, var(--primary-color));
+    transform: translateY(-1px);
+}
+
+/* Transport Filter Enhancements */
+.transport-filters {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.filter-checkbox {
+    transition: all 0.2s ease;
+    padding: 8px;
+    border-radius: var(--border-radius);
+    border: 1px solid transparent;
+}
+
+.filter-checkbox:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--border-color);
+}
+
+.filter-checkbox input[type="checkbox"]:checked ~ span {
+    transform: scale(1.1);
+}
+
+.checkmark {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.filter-checkbox:hover .checkmark {
+    transform: scale(1.1);
+}
+
+/* Stats Section Enhancements */
+.stats-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--success-color));
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.stat-item {
+    transition: all 0.2s ease;
+}
+
+.stat-item:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+    padding: 8px 10px;
+    margin: 0 -10px;
+    border-radius: var(--border-radius);
+}
+
+.stat-value {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.stat-value.updating {
+    color: var(--accent-color);
+    animation: value-update 0.5s ease;
+}
+
+@keyframes value-update {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); color: var(--primary-color); }
+    100% { transform: scale(1); }
+}
+
+/* Section Collapse/Expand */
+.control-panel section {
+    transition: all 0.3s ease;
+}
+
+.control-panel h3 {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.control-panel h3:hover {
+    color: var(--primary-color);
+}
+
+.control-panel h3::after {
+    content: '▼';
+    position: absolute;
+    right: 0;
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.control-panel section.collapsed h3::after {
+    transform: rotate(-90deg);
+}
+
+.control-panel section.collapsed > *:not(h3) {
+    display: none;
+}
+
+/* Loading States for Controls */
+.control-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.control-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+}
+
+.control-loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--border-color);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1;
+}
+
+/* Keyboard Shortcuts Display */
+.keyboard-shortcuts {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(45, 45, 45, 0.95);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1001;
+}
+
+.keyboard-shortcuts.visible {
+    opacity: 1;
+}
+
+.keyboard-shortcuts h4 {
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    gap: 15px;
+}
+
+.shortcut-key {
+    background: var(--bg-tertiary);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+}
+
+.shortcut-desc {
+    color: var(--text-secondary);
+}
+
+/* Responsive Enhancements */
+@media (max-width: 1024px) {
+    .control-group .btn-primary,
+    .control-group .btn-secondary {
+        min-width: 45px;
+        height: 45px;
+    }
+    
+    .speed-buttons {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    
+    .speed-control {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .control-group {
+        justify-content: center;
+    }
+    
+    .speed-buttons {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    
+    .time-input-controls {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .time-input-controls label {
+        min-width: auto;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .stat-item {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+    
+    .keyboard-shortcuts {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .control-panel {
+        padding: 10px;
+        gap: 15px;
+    }
+    
+    .control-panel section {
+        padding: 15px;
+    }
+    
+    .speed-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Focus Styles for Accessibility */
+.btn-primary:focus,
+.btn-secondary:focus,
+.btn-speed:focus,
+.map-control-btn:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+#timeline-scrubber:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
+}
+
+.filter-checkbox:focus-within {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: var(--border-radius);
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .btn-primary {
+        border: 2px solid white;
+    }
+    
+    .btn-secondary {
+        border: 2px solid var(--text-primary);
+    }
+    
+    .checkmark {
+        border-width: 3px;
+    }
+    
+    #timeline-scrubber::-webkit-slider-track {
+        border: 2px solid var(--text-primary);
+    }
+}

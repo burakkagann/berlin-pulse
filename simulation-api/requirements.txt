@@ -1,0 +1,22 @@
+# Berlin Transport Simulation API Dependencies
+
+# FastAPI and ASGI server
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Database
+asyncpg==0.29.0
+
+# Data validation and settings
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Time handling
+pytz==2023.3
+
+# HTTP client for testing
+httpx==0.25.2
+
+# Development and testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
